@@ -1,5 +1,5 @@
 {
-  "name": "Balachander_J",
+  "name": "phantomcss-junit",
   "version": "0.0.0",
   "description": "This Project is to convert phantomm CSS reports into Junit XML which can be used to integrate during Bamboo deployment.",
   "main": "index.js",
