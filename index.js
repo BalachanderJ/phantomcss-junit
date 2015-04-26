@@ -8,21 +8,25 @@ var failures = [];
 
 var gs = require('glob-stream');
 
-var allFilesStream = gs.create(['./test/*.jpg', '!./test/*.diff.jpg', '!./test/*.fail.jpg']);
+module.exports = {
+	generateReport: function(){
+		var allFilesStream = gs.create(['./test/*.jpg', '!./test/*.diff.jpg', '!./test/*.fail.jpg']);
+		allFilesStream.on('data', function(file){
+		  allFiles.push(parsePath(file.path).name);
+		});
 
-allFilesStream.on('data', function(file){
-  allFiles.push(parsePath(file.path).name);
-});
+		allFilesStream.on('end',function(){
+			var failuresFilesStream = gs.create(['./test/failures/*.jpg']);
+			failuresFilesStream.on('data', function(file){
+		  		failures.push(parsePath(file.path).name);
+			});
+			failuresFilesStream.on('end',function(){
+				getAllSuccess();
+			})
+		});
+	}
+}
 
-allFilesStream.on('end',function(){
-	var failuresFilesStream = gs.create(['./test/failures/*.jpg']);
-	failuresFilesStream.on('data', function(file){
-  		failures.push(parsePath(file.path).name);
-	});
-	failuresFilesStream.on('end',function(){
-		getAllSuccess();
-	})
-});
 
 getAllSuccess = function () {
 	for (var i = 0; i < allFiles.length; i++) {
